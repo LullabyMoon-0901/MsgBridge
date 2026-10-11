@@ -1,0 +1,72 @@
+=== xcodebuild -version ===
+Xcode 15.4
+Build version 15F31d
+=== ls 仓库根 ===
+total 48
+drwxr-xr-x  11 runner  staff   352 Oct 11 05:00 .
+drwxr-xr-x   3 runner  staff    96 Oct 11 05:00 ..
+drwxr-xr-x  14 runner  staff   448 Oct 11 05:00 .git
+-rw-r--r--   1 runner  staff   215 Oct 11 05:00 .gitattributes
+drwxr-xr-x   3 runner  staff    96 Oct 11 05:00 .github
+-rw-r--r--   1 runner  staff   301 Oct 11 05:00 .gitignore
+drwxr-xr-x  12 runner  staff   384 Oct 11 05:00 MsgBridge
+drwxr-xr-x   5 runner  staff   160 Oct 11 05:00 MsgBridge.xcodeproj
+-rw-r--r--   1 runner  staff  6750 Oct 11 05:00 README.md
+-rw-r--r--   1 runner  staff    81 Oct 11 05:00 diag.txt
+-rw-r--r--   1 runner  staff  1560 Oct 11 05:00 project.yml
+=== 工程与 scheme 列表 ===
+Command line invocation:
+    /Applications/Xcode_15.4.app/Contents/Developer/usr/bin/xcodebuild -project MsgBridge.xcodeproj -list
+
+User defaults from command line:
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Information about project "MsgBridge":
+    Targets:
+        MsgBridge
+
+    Build Configurations:
+        Debug
+        Release
+
+    If no build configuration is specified and -scheme is not passed then "Debug" is used.
+
+    Schemes:
+        MsgBridge
+
+=== project.pbxproj 头部 30 行 ===
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		669D3A0BE957743EFB753C6B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F536AF46FA43A4BC3B563 /* Models.swift */; };
+		718B9438BA53D3DED1113C6C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B444CF67F72771A20DA8E7 /* SettingsView.swift */; };
+		94BDD4F7413FDFC959F88DCD /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8914D2EEE780FF1CFD1B0 /* SyncService.swift */; };
+		9733668F3C03CF670CBDCBAB /* MessageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5072915E0874752CD741A85E /* MessageStore.swift */; };
+		9C7661636438BE2747770B2D /* MsgBridgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F9B566EC997B69C7D4B411 /* MsgBridgeApp.swift */; };
+		9DD3FE2F66261E0A263EAB8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33B4A541AD5207F0709D0507 /* Assets.xcassets */; };
+		AC91FF7B903D158218A1A59B /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F38B4A5849109120FA4DCB /* MessageDetailView.swift */; };
+		B3E8039791745DC4974C98BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0DA3926617291494F58F12B /* ContentView.swift */; };
+		DDE4A4B55A03D85845B24848 /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FC3F0DBD6E20159FC36A95 /* MessageListView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		199102715F28AE15885263D2 /* MsgBridge.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MsgBridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33B4A541AD5207F0709D0507 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5072915E0874752CD741A85E /* MessageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStore.swift; sourceTree = "<group>"; };
+		58F9B566EC997B69C7D4B411 /* MsgBridgeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgBridgeApp.swift; sourceTree = "<group>"; };
+		74B444CF67F72771A20DA8E7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		74FC3F0DBD6E20159FC36A95 /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
+		769F536AF46FA43A4BC3B563 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		A0DA3926617291494F58F12B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A4F38B4A5849109120FA4DCB /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
+=== objectVersion / 兼容版本 ===
+	objectVersion = 60;
+			compatibilityVersion = "Xcode 15.0";
+=== pbxproj 大小 ===
+   13594 MsgBridge.xcodeproj/project.pbxproj
