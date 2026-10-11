@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Xcode / 编译产物（由 xcodegen 和云端自动生成，不需要上传）
+build/
+DerivedData/
+Payload/
+*.xcodeproj
+*.ipa
+xcuserdata/
+*.xcuserstate
+
+# Python（配套的电脑端程序）
+.venv/
+__pycache__/
+*.pyc
+messages.json
+test_messages.json
+
+# 编辑器
+.vscode/
+.idea/
