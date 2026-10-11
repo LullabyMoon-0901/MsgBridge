@@ -27,8 +27,29 @@ jobs:
 
       - name: 生成 Xcode 工程
         run: |
+          set +e
+          set +o pipefail
           xcodegen generate
           xcodegen --version
+
+          # 保险丝：确认生成的工程格式能被本机 Xcode 打开。
+          # xcodegen 默认生成 objectVersion 77（Xcode 16 格式），
+          # Xcode 15.x 会拒绝读取，这里强制降到 60（Xcode 15.0 格式）。
+          PBX="MsgBridge.xcodeproj/project.pbxproj"
+          if [ -f "$PBX" ]; then
+            OV=$(grep -m1 -o 'objectVersion = [0-9]*' "$PBX" | grep -o '[0-9]*')
+            echo "生成的 objectVersion = ${OV:-未知}"
+            if [ -n "$OV" ] && [ "$OV" -gt 60 ]; then
+              sed -i '' 's/objectVersion = [0-9]*;/objectVersion = 60;/' "$PBX"
+              sed -i '' 's/preferredProjectObjectVersion = [0-9]*;//' "$PBX"
+              OV2=$(grep -m1 -o 'objectVersion = [0-9]*' "$PBX" | grep -o '[0-9]*')
+              echo "已降级 objectVersion: $OV -> $OV2"
+            fi
+            echo "最终 objectVersion = $(grep -m1 -o 'objectVersion = [0-9]*' "$PBX" | grep -o '[0-9]*')"
+          else
+            echo "警告：没有生成 project.pbxproj"
+          fi
+          exit 0
 
       - name: 环境诊断（结果存入 diag.txt）
         run: |
@@ -43,6 +64,8 @@ jobs:
             xcodebuild -project MsgBridge.xcodeproj -list 2>&1
             echo '=== project.pbxproj 头部 30 行 ==='
             head -30 MsgBridge.xcodeproj/project.pbxproj 2>&1
+            echo '=== objectVersion / 兼容版本 ==='
+            grep -m2 -E 'objectVersion|compatibilityVersion|preferredProjectObjectVersion' MsgBridge.xcodeproj/project.pbxproj 2>&1
             echo '=== pbxproj 大小 ==='
             wc -c MsgBridge.xcodeproj/project.pbxproj 2>&1
           } > diag.txt 2>&1
