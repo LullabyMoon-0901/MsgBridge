@@ -27,7 +27,6 @@ jobs:
 
       - name: 编译 App
         run: |
-          set -o pipefail
           xcodebuild \
             -project MsgBridge.xcodeproj \
             -scheme MsgBridge \
@@ -38,7 +37,20 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            build | tail -40
+            build > build_output.txt 2>&1
+          CODE=$?
+          echo "xcodebuild 退出码: $CODE"
+          if [ $CODE -ne 0 ]; then
+            echo "===== 命中的错误行（最多 8 条）====="
+            grep -E "error:" build_output.txt | sort -u | head -8 | tee errors.txt
+            if [ -s errors.txt ]; then
+              while IFS= read -r line; do echo "::error::$line"; done < errors.txt
+            else
+              echo "===== 无 error 关键字，打印日志末尾 8 行 ====="
+              tail -8 build_output.txt | while IFS= read -r line; do echo "::error::$line"; done
+            fi
+          fi
+          exit $CODE
 
       - name: 打包成 ipa
         run: |
@@ -60,3 +72,11 @@ jobs:
           name: MsgBridge-ipa
           path: MsgBridge.ipa
           retention-days: 30
+
+      - name: 保存完整编译日志（排错用）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build_output.txt
+          if-no-files-found: ignore
