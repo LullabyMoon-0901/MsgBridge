@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: 云端编译 iOS 安装包
@@ -23,19 +26,24 @@ jobs:
         run: brew install xcodegen
 
       - name: 生成 Xcode 工程
-        run: xcodegen generate
+        run: |
+          xcodegen generate
+          xcodegen --version
 
-      - name: 环境诊断（写入 Summary 供远程排错）
+      - name: 环境诊断（结果存入 diag.txt）
         run: |
           {
-            echo '## 环境诊断'
-            echo '```'
-            echo '--- 仓库目录 ---'
+            echo '=== ls 仓库根 ==='
             ls -la
-            echo '--- 工程与 scheme 列表 ---'
+            echo '=== 工程与 scheme 列表 ==='
             xcodebuild -project MsgBridge.xcodeproj -list 2>&1
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+            echo '=== project.pbxproj 头部 30 行 ==='
+            head -30 MsgBridge.xcodeproj/project.pbxproj 2>&1
+            echo '=== pbxproj 文件大小 ==='
+            wc -c MsgBridge.xcodeproj/project.pbxproj 2>&1
+          } > diag.txt 2>&1
+          cat diag.txt
+          exit 0
 
       - name: 编译 App
         run: |
@@ -52,22 +60,6 @@ jobs:
             build > build_output.txt 2>&1
           CODE=$?
           echo "xcodebuild 退出码: $CODE"
-          if [ $CODE -ne 0 ]; then
-            {
-              echo '## xcodebuild 完整输出（前 100KB）'
-              echo '```'
-              head -c 100000 build_output.txt
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-            echo "===== 命中的错误行（最多 8 条）====="
-            grep -E "error:" build_output.txt | sort -u | head -8 | tee errors.txt
-            if [ -s errors.txt ]; then
-              while IFS= read -r line; do echo "::error::$line"; done < errors.txt
-            else
-              echo "===== 无 error 关键字，打印日志末尾 8 行 ====="
-              tail -8 build_output.txt | while IFS= read -r line; do echo "::error::$line"; done
-            fi
-          fi
           exit $CODE
 
       - name: 打包成 ipa
@@ -91,10 +83,25 @@ jobs:
           path: MsgBridge.ipa
           retention-days: 30
 
-      - name: 保存完整编译日志（排错用）
+      - name: 保存编译日志 artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-log
-          path: build_output.txt
+          path: |
+            build_output.txt
+            diag.txt
           if-no-files-found: ignore
+
+      - name: 把日志推回 ci-logs 分支（供远程排错）
+        if: always()
+        run: |
+          git config user.name "ci-log-bot"
+          git config user.email "ci-log-bot@users.noreply.github.com"
+          git add -f diag.txt build_output.txt
+          if git diff --cached --quiet; then
+            echo "没有新的日志可提交"
+            exit 0
+          fi
+          git commit -m "ci: diagnostic logs [skip ci]"
+          git push -f origin "HEAD:refs/heads/ci-logs"
